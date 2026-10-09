@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2563eb">
+<title>BoxVault — Box Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{
+ --primary:#2563eb;--primary2:#1d4ed8;--bg:#f5f7fb;--card:#fff;--text:#172033;
+ --muted:#687386;--border:#e5e9f0;--success:#16a34a;--danger:#dc2626;
+ --shadow:0 10px 30px rgba(15,23,42,.07);--radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.topbar{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 4px 20px rgba(37,99,235,.22)}
+.nav{max-width:1180px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:20px}
+.brand-icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:19px}
+.nav-links{display:flex;gap:8px}
+.nav-links button{background:transparent;color:#fff;border:0;padding:9px 12px;border-radius:9px}
+.nav-links button:hover{background:rgba(255,255,255,.12)}
+.hero{max-width:1180px;margin:0 auto;padding:42px 20px 28px}
+.hero h1{margin:0;font-size:clamp(27px,5vw,42px);letter-spacing:-1px}
+.hero p{margin:10px 0 0;color:#687386;font-size:15px}
+.container{max-width:1180px;margin:auto;padding:0 20px 45px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:19px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+.stat-icon{width:48px;height:48px;border-radius:14px;background:#eef4ff;color:var(--primary);display:grid;place-items:center;font-size:19px}
+.stat strong{font-size:25px;display:block}.stat span{font-size:13px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:20px}
+.card-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}
+.card-title h2{font-size:18px;margin:0}.card-title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.search-wrap{position:relative}.search-wrap i{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a0b2}
+.search-wrap input{padding-left:44px;padding-right:120px}
+.search-btn{position:absolute;right:6px;top:6px;bottom:6px;border:0;border-radius:10px;background:var(--primary);color:#fff;padding:0 17px;font-weight:700}
+input,textarea{width:100%;border:1px solid var(--border);background:#fbfcfe;color:var(--text);padding:12px 13px;border-radius:11px;outline:0;transition:.2s}
+input:focus,textarea:focus{border-color:#7aa2ff;box-shadow:0 0 0 3px #eaf0ff}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+.full{grid-column:1/-1}
+.actions{display:flex;gap:9px;justify-content:flex-end;margin-top:15px}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary2)}
+.btn-light{background:#eef2f7;color:#374151}.btn-danger{background:#fee2e2;color:#b91c1c}
+.result{margin-top:18px}.result.hidden{display:none}
+.result-box{border:1px solid #dbe5ff;background:#f8faff;border-radius:15px;padding:18px}
+.box-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.box-name{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800}
+.box-icon{width:38px;height:38px;border-radius:11px;background:#e8f0ff;color:var(--primary);display:grid;place-items:center}
+.badge{background:#e8f0ff;color:var(--primary);font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px}
+.items{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:15px}
+.item{background:#fff;border:1px solid var(--border);border-radius:11px;padding:11px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.item-main{display:flex;align-items:center;gap:9px;min-width:0}.item-main i{color:var(--primary);font-size:13px}.item-main span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icon-btn{border:0;background:transparent;color:#9aa4b2;padding:6px}.icon-btn:hover{color:var(--danger)}
+.box-list{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.box-card{border:1px solid var(--border);border-radius:15px;padding:17px;background:#fff}
+.box-card:hover{border-color:#c7d7ff;box-shadow:0 7px 20px rgba(37,99,235,.07)}
+.box-card .items{grid-template-columns:1fr}
+.empty{text-align:center;padding:30px 15px;color:var(--muted)}
+.empty i{font-size:30px;margin-bottom:9px;color:#aab4c3}
+.toast{position:fixed;right:20px;bottom:20px;background:#172033;color:#fff;padding:12px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;z-index:50;font-size:14px}
+.toast.show{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+footer{text-align:center;color:#8791a1;font-size:12px;padding:5px 20px 25px}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.box-list{grid-template-columns:1fr}}
+@media(max-width:620px){
+ .nav{padding:12px 14px}.nav-links button span{display:none}.hero{padding:28px 15px 20px}.container{padding:0 15px 35px}
+ .stats{grid-template-columns:1fr}.card{padding:17px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
+ .search-wrap input{padding-right:13px}.search-btn{position:static;width:100%;height:44px;margin-top:8px}
+ .search-wrap{display:flex;flex-direction:column}.search-wrap i{top:22px}
+ .items{grid-template-columns:1fr}.box-head{align-items:flex-start;flex-direction:column}.actions{justify-content:stretch}.actions .btn{flex:1;justify-content:center}
+}
+ .hidden{display:none!important}.auth-note{font-size:13px;color:var(--muted);line-height:1.5}.auth-actions{display:flex;gap:10px;flex-wrap:wrap}.user-chip{font-size:12px;color:#fff;opacity:.9;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="nav">
+  <div class="brand"><div class="brand-icon"><i class="fa-solid fa-box-open"></i></div>BoxVault</div>
+  <div class="nav-links">
+   <button onclick="scrollToSection('search')"><i class="fa-solid fa-magnifying-glass"></i> <span>Search</span></button>
+   <button onclick="scrollToSection('add')"><i class="fa-solid fa-plus"></i> <span>Add Box</span></button>
+   <button onclick="scrollToSection('all')"><i class="fa-solid fa-boxes-stacked"></i> <span>All Boxes</span></button>
+   <button id="signOutBtn" class="hidden" onclick="signOut()"><i class="fa-solid fa-right-from-bracket"></i> <span>Sign out</span></button>
+  </div>
+ </div>
+</header>
+
+<section class="hero">
+ <h1>All your boxes, in one place.</h1>
+ <p>Find what is packed in each box instantly by searching its box number.</p>
+</section>
+
+<main class="container">
+ <section class="card" id="authCard">
+  <div class="card-title"><div><h2><i class="fa-solid fa-shield-halved"></i> Sign in to BoxVault</h2><p>Your inventory is private to your account.</p></div></div>
+  <div class="form-grid">
+   <div class="field"><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+   <div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
+  </div>
+  <div class="actions auth-actions"><button class="btn btn-primary" onclick="signIn()"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button><button class="btn btn-light" onclick="signUp()"><i class="fa-solid fa-user-plus"></i> Create account</button></div>
+  <p class="auth-note">Use your own email address and create your own password (at least 6 characters). If email confirmation is enabled, open the confirmation email before signing in. Do not share your password with anyone.</p>
+  <p id="authStatus" class="auth-note" role="status" aria-live="polite"></p>
+ </section>
+ <div id="inventoryArea" class="hidden">
+ <section class="stats">
+  <div class="stat"><div class="stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div><div><strong id="boxCount">0</strong><span>Total Boxes</span></div></div>
+  <div class="stat"><div class="stat-icon"><i class="fa-solid fa-cubes"></i></div><div><strong id="itemCount">0</strong><span>Total Items</span></div></div>
+  <div class="stat"><div class="stat-icon"><i class="fa-solid fa-database"></i></div><div><strong id="storageStatus">Cloud</strong><span>Data Storage</span></div></div>
+ </section>
+
+ <section class="card" id="search">
+  <div class="card-title"><div><h2><i class="fa-solid fa-magnifying-glass"></i> Box Search</h2><p>Enter a box number to find its contents.</p></div></div>
+  <div class="search-wrap">
+   <i class="fa-solid fa-search"></i>
+   <input id="searchBox" placeholder="e.g. B001, BOX-12, 101">
+   <button class="search-btn" onclick="searchBox()">Search</button>
+  </div>
+  <div id="searchResult" class="result hidden"></div>
+ </section>
+
+ <section class="card" id="add">
+  <div class="card-title"><div><h2><i class="fa-solid fa-square-plus"></i> Add a New Box</h2><p>Save all items packed inside a box.</p></div></div>
+  <div class="form-grid">
+   <div class="field"><label>Box Number</label><input id="boxNumber" placeholder="e.g. B001"></div>
+   <div class="field"><label>Single Item <span style="font-weight:400;color:#8a94a4">(optional)</span></label><input id="itemName" placeholder="e.g. Books"></div>
+   <div class="field full"><label>Multiple Items <span style="font-weight:400;color:#8a94a4">(separate with commas)</span></label><textarea id="itemsList" rows="3" placeholder="Books, Clothes, Charger, Documents"></textarea></div>
+  </div>
+  <div class="actions"><button class="btn btn-primary" onclick="addBox()"><i class="fa-solid fa-floppy-disk"></i> Save Box</button></div>
+ </section>
+
+ <section class="card" id="all">
+  <div class="card-title"><div><h2><i class="fa-solid fa-boxes-stacked"></i> All Boxes</h2><p>Browse every box saved to your account.</p></div></div>
+  <div id="allBoxes"></div>
+ </section>
+ </div>
+</main>
+<footer>BoxVault • Simple, fast & responsive inventory manager</footer>
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://fgwfhpqagsbnbdscahcg.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_UqLQ6tuvuI8sxqNkK3wD6w_U0D0J70N";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let boxes = {};
+let boxIds = {};
+let itemRecords = {};
+let currentUser = null;
+const $ = id => document.getElementById(id);
+
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),5000)}
+function authMessage(msg,isError=false){const el=$("authStatus");if(el){el.textContent=msg;el.style.color=isError?"#b91c1c":"#166534"}toast(msg)}
+function friendlyAuthError(error){
+ const msg=String(error?.message||error||"Unknown error");
+ if(/already registered|already been registered/i.test(msg))return "This email already has an account. Choose Sign in instead.";
+ if(/invalid login credentials/i.test(msg))return "Email or password is incorrect. If you just signed up, confirm your email first.";
+ if(/email not confirmed/i.test(msg))return "Please open the confirmation email from Supabase, then sign in.";
+ if(/password.*(weak|short|least)/i.test(msg))return "Choose a stronger password with at least 6 characters.";
+ if(/failed to fetch|networkerror|load failed/i.test(msg))return "Could not reach Supabase. Check your internet and open this app from a web address or local web server, not by double-clicking the HTML file.";
+ return msg;
+}
+function setSignedIn(user){
+ currentUser=user;
+ $("authCard").classList.toggle("hidden",!!user);
+ $("inventoryArea").classList.toggle("hidden",!user);
+ $("signOutBtn").classList.toggle("hidden",!user);
+ if(user){$("storageStatus").textContent="Cloud";loadInventory().catch(e=>toast("Could not load inventory: "+e.message))}
+}
+async function signIn(){
+ const email=$("authEmail").value.trim(),password=$("authPassword").value;
+ if(!email||!password){authMessage("Enter your email and password.",true);return}
+ try{
+  const {data,error}=await db.auth.signInWithPassword({email,password});
+  if(error){authMessage(friendlyAuthError(error),true);return}
+  setSignedIn(data.user);authMessage("Signed in successfully.");
+ }catch(error){authMessage(friendlyAuthError(error),true)}
+}
+async function signUp(){
+ const email=$("authEmail").value.trim(),password=$("authPassword").value;
+ if(!email||!password){authMessage("Enter your email and create a password.",true);return}
+ if(password.length<6){authMessage("Password must be at least 6 characters.",true);return}
+ try{
+  const {data,error}=await db.auth.signUp({email,password});
+  if(error){authMessage(friendlyAuthError(error),true);return}
+  if(data.session){setSignedIn(data.user);authMessage("Account created successfully.")}
+  else authMessage("Account request received. Check your email's inbox and spam folder for a confirmation link, then sign in.");
+ }catch(error){authMessage(friendlyAuthError(error),true)}
+}
+async function signOut(){const {error}=await db.auth.signOut();if(error){toast(error.message);return}boxes={};boxIds={};itemRecords={};render();setSignedIn(null);toast("Signed out.")}
+async function loadInventory(){
+ if(!currentUser)return;
+ const {data,error}=await db.from("boxes").select("id,box_number,box_items(id,item_name)").order("box_number");
+ if(error)throw error;
+ boxes={};boxIds={};itemRecords={};
+ for(const row of (data||[])){
+  boxes[row.box_number]=(row.box_items||[]).map(x=>x.item_name);
+  boxIds[row.box_number]=row.id;
+  itemRecords[row.box_number]=row.box_items||[];
+ }
+ render();
+}
+async function addBox(){
+ if(!currentUser){toast("Please sign in first.");return}
+ const number=$("boxNumber").value.trim(),single=$("itemName").value.trim(),multiple=$("itemsList").value.trim();
+ if(!number){toast("Enter a box number.");$("boxNumber").focus();return}
+ let items=[];if(single)items.push(single);if(multiple)items.push(...multiple.split(",").map(x=>x.trim()).filter(Boolean));
+ items=[...new Set(items)];if(!items.length){toast("Add at least one item.");return}
+ let boxId=boxIds[number];
+ if(!boxId){const {data,error}=await db.from("boxes").insert({box_number:number}).select("id").single();if(error){toast(error.message);return}boxId=data.id;boxIds[number]=boxId;boxes[number]=[];itemRecords[number]=[]}
+ const existing=new Set((itemRecords[number]||[]).map(x=>x.item_name));
+ const newItems=items.filter(x=>!existing.has(x));
+ if(newItems.length){const {error}=await db.from("box_items").insert(newItems.map(item_name=>({box_id:boxId,item_name})));if(error){toast(error.message);return}}
+ $("boxNumber").value="";$("itemName").value="";$("itemsList").value="";
+ await loadInventory();toast("Box saved to Supabase.");
+}
+async function deleteItem(box,index){
+ const item=(itemRecords[box]||[])[index];if(!item)return;
+ const {error}=await db.from("box_items").delete().eq("id",item.id);if(error){toast(error.message);return}
+ await loadInventory();toast("Item deleted.");
+}
+async function deleteBox(box){
+ if(!confirm("Delete this box and all its items?"))return;
+ const {error}=await db.from("boxes").delete().eq("id",boxIds[box]);if(error){toast(error.message);return}
+ await loadInventory();toast("Box deleted.");
+}
+function boxHTML(key,withDelete=false){
+ return `<div class="box-card"><div class="box-head"><div class="box-name"><div class="box-icon"><i class="fa-solid fa-box"></i></div>${escapeHtml(key)}</div><span class="badge">${boxes[key].length} Items</span></div><div class="items">${boxes[key].map((item,i)=>`<div class="item"><div class="item-main"><i class="fa-solid fa-cube"></i><span>${escapeHtml(item)}</span></div>${withDelete?`<button class="icon-btn" title="Delete item" onclick="deleteItem('${escapeAttr(key)}',${i})"><i class="fa-solid fa-trash"></i></button>`:""}</div>`).join("")}</div>${withDelete?`<div class="actions"><button class="btn btn-light" onclick="deleteBox('${escapeAttr(key)}')"><i class="fa-regular fa-trash-can"></i> Delete Box</button></div>`:""}</div>`;
+}
+function searchBox(){
+ const q=$("searchBox").value.trim().toLowerCase(),r=$("searchResult");r.classList.remove("hidden");
+ const key=Object.keys(boxes).find(k=>k.toLowerCase()===q);
+ if(!key){r.innerHTML=`<div class="empty"><i class="fa-solid fa-box-open"></i><br><b>Box not found</b><br>Check the box number and try again.</div>`;return}
+ r.innerHTML=`<div class="result-box">${boxHTML(key,true)}</div>`;
+}
+function render(){
+ const keys=Object.keys(boxes).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+ const total=keys.reduce((n,k)=>n+boxes[k].length,0);$("boxCount").textContent=keys.length;$("itemCount").textContent=total;
+ $("allBoxes").innerHTML=keys.length?`<div class="box-list">${keys.map(k=>boxHTML(k)).join("")}</div>`:`<div class="empty"><i class="fa-solid fa-box-open"></i><br><b>No boxes yet</b><br>Use the form above to add your first box.</div>`;
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function escapeAttr(s){return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"})}
+$("searchBox").addEventListener("keydown",e=>{if(e.key==="Enter")searchBox()});
+db.auth.getSession().then(({data,error})=>{if(error){toast(error.message);return}setSignedIn(data.session?.user||null)});
+db.auth.onAuthStateChange((_event,session)=>{if(session?.user && currentUser?.id!==session.user.id)setSignedIn(session.user);else if(!session)setSignedIn(null)});
+render();
+</script>
+</body>
+</html>
